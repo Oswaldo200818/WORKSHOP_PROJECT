@@ -1,0 +1,98 @@
+# -Crear un playbook que corra sobre el grupo test:
+# 1. Crear el usuario: student
+# 2. Crear el directorio: myplaybook owner:student group:student mode:644
+# 3. Crear el archivo mytest en el directorio myplaybook en el cual el contenido se pueda ingresar con una variable
+# 4. Imprimir el mensaje "La distribucion de ansible es RedHat" si la variable ansible-distribution es igual a RedHat
+# 5. Asegure que los paquetes: firewalld y httpd esten instalados y en su ultima version.
+# 6. Asegure que los servicios httpd y firewalld esten activos y habilitados
+# 7. Permita el servicio http en el firewall
+# 8. Listar e imprimir todas las actualizaciones que se pueden realizar
+# 9. Guardar la salida de los comandos: uptime, cat /etc/resolv.conf, df -h, en el archivo "/tmp/evidencias"
+# 9. Actualizar todos los paquetes del servidor excluyendo el paquete httpd
+# 10. Reiniciar la maquina
+# 11. Imprimir la distribucion de ansible en el archivo /tmp/distribution
+# 12. Manualmente crear archivo y copiar al servidor
+# Agrupar tareas en roles
+---
+- name: practice
+  host: test
+  vars: 
+    mytest_content: "Este es el contenido del archivo test"
+
+  tasks:
+    - name: Create user student
+      ansible.builtin.user:
+        name: student
+        comment: Creating users
+        password: "admin"
+        state: present
+
+    - name: Create directory
+      ansible.builtin.file:
+        path: /home/student/myplaybook
+        owner: student
+        group: student
+        mode: 644
+        state: directory
+    
+    - name: Create file mytest in the directory
+      ansible.builtin.copy:
+        src: "{{ mytest_content }}"
+        dest: /home/student/myplaybook/mytest
+
+    - name: Print message "La distribucion de ansible es RedHat" equal "RedHat"
+      ansible.builtin.debug:
+        msg: "La distribucion de ansible es RedHat"
+      when: ansible-distribution == "RedHat"
+
+    - name: ensure package firewalld and http are installed in the latest version
+      yum:
+        name: 
+          - firewalld
+          - httpd
+        state: latest
+    
+    - name: Ensure that they services firewalld and http are actives and enables
+      ansible.builtin.service:
+        name:
+          - firewalld
+          - http
+        enabled: yes
+        state: started
+    
+    - name: Allow of service Http in the firewall
+      ansible.posix.ufw:
+        name: http
+        action: allow
+        state: present
+        enabled: yes
+
+    - name: list and print all updates that can be made
+      yum:
+        list: updates
+        state: latest
+      register: updates
+       
+
+    - name: Save the output of the commands in file 
+      shell: |
+        uptime > /tmp/evidencias
+        cat /etc/resolv.conf >> /tmp/evidencias
+        df -h > /tmp/evidencias
+
+    - name: Update all the package less httpd
+      yum:
+        name: '*'
+        state: latest
+        exclude: httpd
+
+    - name: Restart the machine
+      reboot:
+        delay: 5
+        msg: "Restarting the machine"
+        pre_reboot_delat: 10
+        post_reboot_delat: 20
+        
+
+        
+
