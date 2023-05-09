@@ -1,18 +1,3 @@
-# -Crear un playbook que corra sobre el grupo test:
-# 1. Crear el usuario: student
-# 2. Crear el directorio: myplaybook owner:student group:student mode:644
-# 3. Crear el archivo mytest en el directorio myplaybook en el cual el contenido se pueda ingresar con una variable
-# 4. Imprimir el mensaje "La distribucion de ansible es RedHat" si la variable ansible-distribution es igual a RedHat
-# 5. Asegure que los paquetes: firewalld y httpd esten instalados y en su ultima version.
-# 6. Asegure que los servicios httpd y firewalld esten activos y habilitados
-# 7. Permita el servicio http en el firewall
-# 8. Listar e imprimir todas las actualizaciones que se pueden realizar
-# 9. Guardar la salida de los comandos: uptime, cat /etc/resolv.conf, df -h, en el archivo "/tmp/evidencias"
-# 9. Actualizar todos los paquetes del servidor excluyendo el paquete httpd
-# 10. Reiniciar la maquina
-# 11. Imprimir la distribucion de ansible en el archivo /tmp/distribution
-# 12. Manualmente crear archivo y copiar al servidor
-# Agrupar tareas en roles
 ---
 - name: practice
   host: test
@@ -24,8 +9,8 @@
       ansible.builtin.user:
         name: student
         comment: Creating users
-        password: "admin"
-        state: present
+        shell: /bin/bash
+        group: student
 
     - name: Create directory
       ansible.builtin.file:
@@ -88,10 +73,14 @@
 
     - name: Restart the machine
       reboot:
-        delay: 5
         msg: "Restarting the machine"
         pre_reboot_delat: 10
         post_reboot_delat: 20
+    
+    - name: Print the distribution Ansible in the file /temp/distribution
+      ansible.builtin.lineinfile:
+        path: /temp/distribution
+        line: "La distribucion de Ansible es {{ ansible_distribution}}"
         
 
         
