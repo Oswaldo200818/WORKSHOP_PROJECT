@@ -60,10 +60,21 @@
        
 
     - name: Save the output of the commands in file 
-      shell: |
-        uptime > /tmp/evidencias
-        cat /etc/resolv.conf >> /tmp/evidencias
-        df -h > /tmp/evidencias
+      ansible.builtin.shell:
+        cmd: "{{ item }}"
+      register: output_file
+      with_items:
+        - uptime
+        - cat /etc/resolv.conf
+        - df -h
+      
+    - name: Create file /tmp/evidencias
+      ansible.builtin.copy:
+        content: |
+          {{ item.stdout }}
+        dest: /tmp/evidencias
+      with_items:
+        - "{{ output_file.results }}"
 
     - name: Update all the package less httpd
       yum:
@@ -81,7 +92,7 @@
       ansible.builtin.lineinfile:
         path: /temp/distribution
         line: "La distribucion de Ansible es {{ ansible_distribution}}"
-        
-
+    
+    
         
 
