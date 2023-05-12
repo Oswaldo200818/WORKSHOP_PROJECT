@@ -41,11 +41,14 @@
       - httpd
         
    - name: list and print all updates that can be made
-     yum:
+     ansible.legacy.dnf:
       list: updates
-      state: latest
-      register: updates
-
+     vars:
+      updates_output: "{{ stdout_lines }}
+      
+   - name: prue
+     debug:
+      var: updates_output
 
    - name: Save the output of the commands in file
      ansible.builtin.shell:
