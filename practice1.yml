@@ -10,7 +10,6 @@
       name: student
       comment: Creating users
       shell: /bin/bash
-      group: student
 
    - name: Create directory
      ansible.builtin.file:
