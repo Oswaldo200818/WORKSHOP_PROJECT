@@ -10,10 +10,11 @@
       name: student
       comment: Creating users
       shell: /bin/bash
+      group: student
 
    - name: Create directory
      ansible.builtin.file:
-      path: /home/student/myplaybook
+      path: /home/student/myplayboo
       owner: student
       group: student
       mode: "644"
@@ -21,14 +22,8 @@
 
    - name: Create file mytest in the directory
      ansible.builtin.copy:
-      content: "{{ mytest_content }}"
+      src: "{{ mytest_content }}"
       dest: /home/student/myplaybook/mytest
-
-  - name: Print message "La distribucion de ansible es RedHat" equal "RedHat"
-    ansible.builtin.debug:
-      msg: "La distribucion de ansible es RedHat"
-      when: ansible_distribution == "RedHat"
-
 
    - name: ensure package firewalld and http are installed in the latest version
      yum:
