@@ -1,1 +1,37 @@
+---
+- name: Correct the mistakes
+  hosts: all
+  gather_facts: no
+  become: yes
+  
+  tasks:
+  - name: Create user student_new
+    ansible.builtin.user:
+      name: student_new
+      state: present
+      
+  - name: Latest Apache version installed
+    yum:
+      name: httpd
+      state: latest
+      
+  - name: Apache enabled and running
+    service:
+      name: httpd
+      enabled: true
+      state: started
+      
+  - name: Copy index.html
+    copy:
+      src: index.html
+      dest: /var/www/html/
+      
+  - name: Print RHEL version
+    debug:
+      msg: "The distribution of this server is Red Hat 8.7"
+    when: ansible_facts['distribution'] == 'RedHat' and ansible_facts['distribution_major_version'] == '8'
 
+  - name: Create template with user input from survey
+    template:
+      src: template.j2
+      dest: /tmp/template
