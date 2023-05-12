@@ -24,10 +24,11 @@
       content: "{{ mytest_content }}"
       dest: /home/student/myplaybook/mytest
 
-   - name: Print message "La distribucion de ansible es RedHat" equal "RedHat"
-     ansible.builtin.debug:
+  - name: Print message "La distribucion de ansible es RedHat" equal "RedHat"
+    ansible.builtin.debug:
       msg: "La distribucion de ansible es RedHat"
-      when: ansible-distribution == "RedHat"
+    when: ansible_distribution == "RedHat"
+
 
    - name: ensure package firewalld and http are installed in the latest version
      yum:
