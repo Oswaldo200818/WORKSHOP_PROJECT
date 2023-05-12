@@ -1,0 +1,36 @@
+- name: Correct the mistakes
+  hosts: all
+  gather_facts: yes
+  become: yes
+
+  tasks:
+  - name: Create user student_new
+    ansible.builtin.user:
+      name: student_new
+      state: present
+
+  - name: latest Apache version installed
+    ansible.builtin.yum:
+      name: httpd
+      state: latest
+
+  - name: Apache enabled and running
+    ansible.builtin.service:
+      name: httpd
+      enabled: true
+      state: started
+
+  - name: copy index.html
+    ansible.builtin.copy:
+      src: index.html
+      dest: /var/www/html/
+
+  - name: print rhel version
+    ansible.builtin.debug:
+      msg: "The distribution of this server is Red Hat {{ ansible_distribution_major_version }}.{{ ansible_distribution_minor_version }}"
+    when: ansible_facts.distribution == "RedHat" and ansible_facts.distribution_major_version == "8" and ansible_facts.distribution_minor_version == "7"
+
+  - name: Create template with user input from survey
+    ansible.builtin.template:
+      src: template.j2
+      dest: /tmp/template
