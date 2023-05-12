@@ -1,6 +1,6 @@
 ---
 - name: Correct the mistakes
-  hosts: all
+  hosts: server
   gather_facts: false
   become: yes
   
