@@ -13,7 +13,7 @@
 
    - name: Create directory
      ansible.builtin.file:
-      path: /home/student/myplayboo
+      path: /home/student/myplaybook
       owner: student
       group: student
       mode: "644"
