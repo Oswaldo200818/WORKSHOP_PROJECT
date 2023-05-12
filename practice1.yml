@@ -33,12 +33,13 @@
 
    - name: Ensure that they services firewalld and http are actives and enables
      ansible.builtin.service:
-      name:
-       - firewalld
-       - http
+      name: "{{ item }}"
       enabled: yes
       state: started
-
+     loop:
+      - firewalld
+      - httpd
+        
    - name: list and print all updates that can be made
      yum:
       list: updates
