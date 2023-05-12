@@ -21,7 +21,7 @@
 
    - name: Create file mytest in the directory
      ansible.builtin.copy:
-      src: "{{ mytest_content }}"
+      content: "{{ mytest_content }}"
       dest: /home/student/myplaybook/mytest
 
    - name: Print message "La distribucion de ansible es RedHat" equal "RedHat"
