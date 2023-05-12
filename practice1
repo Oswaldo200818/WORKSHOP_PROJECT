@@ -1,0 +1,87 @@
+---
+- name: Practice
+  hosts: test
+  vars:
+   mytest_content: "Este es el contenido del archivo test"
+
+  tasks:
+   - name: Create user student
+     ansible.builtin.user:
+      name: student
+      comment: Creating users
+      shell: /bin/bash
+      group: student
+
+   - name: Create directory
+     ansible.builtin.file:
+      path: /home/student/myplayboo
+      owner: student
+      group: student
+      mode: "644"
+      state: directory
+
+   - name: Create file mytest in the directory
+     ansible.builtin.copy:
+      src: "{{ mytest_content }}"
+      dest: /home/student/myplaybook/mytest
+
+   - name: Print message "La distribucion de ansible es RedHat" equal "RedHat"
+     ansible.builtin.debug:
+      msg: "La distribucion de ansible es RedHat"
+      when: ansible-distribution == "RedHat"
+
+   - name: ensure package firewalld and http are installed in the latest version
+     yum:
+      name:
+       - firewalld
+       - httpd
+      state: latest
+
+   - name: Ensure that they services firewalld and http are actives and enables
+     ansible.builtin.service:
+      name:
+       - firewalld
+       - http
+      enabled: yes
+      state: started
+
+   - name: list and print all updates that can be made
+     yum:
+      list: updates
+      state: latest
+      register: updates
+
+
+   - name: Save the output of the commands in file
+     ansible.builtin.shell:
+      cmd: "{{ item }}"
+      register: output_file
+      with_items:
+       - uptime
+       - cat /etc/resolv.conf
+       - df -h
+
+   - name: Create file /tmp/evidencias
+     ansible.builtin.copy:
+      content: |
+       {{ item.stdout }}
+      dest: /tmp/evidencias
+      with_items:
+       - "{{ output_file.results }}"
+
+   - name: Update all the package less httpd
+     yum:
+      name: '*'
+      state: latest
+      exclude: httpd
+
+   - name: Restart the machine
+     reboot:
+      msg: "Restarting the machine"
+      pre_reboot_delat: 10
+      post_reboot_delat: 20
+
+   - name: Print the distribution Ansible in the file /temp/distribution
+     ansible.builtin.lineinfile:
+      path: /temp/distribution
+      line: "La distribucion de Ansible es {{ ansible_distribution}}"
