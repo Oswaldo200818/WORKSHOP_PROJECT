@@ -10,11 +10,10 @@
       name: student
       comment: Creating users
       shell: /bin/bash
-      group: student
 
    - name: Create directory
      ansible.builtin.file:
-      path: /home/student/myplayboo
+      path: /home/student/myplaybook
       owner: student
       group: student
       mode: "644"
@@ -22,7 +21,7 @@
 
    - name: Create file mytest in the directory
      ansible.builtin.copy:
-      src: "{{ mytest_content }}"
+      content: "{{ mytest_content }}"
       dest: /home/student/myplaybook/mytest
 
    - name: ensure package firewalld and http are installed in the latest version
